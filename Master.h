@@ -59,7 +59,7 @@ class Master
   ~Master();
 
   Double_t Initializer();
-  Double_t Walk1Photon();
+  /* Double_t Walk1Photon(); */
   void Finisher();
 };
 

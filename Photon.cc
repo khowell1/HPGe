@@ -14,7 +14,6 @@ Photon::Photon() { //constructor for default photon object, creates a vacuum pho
   gRandom->SetSeed(0); //for some other random thing
   density=10e-6;
   SetMu(10e-6);
-
 }
 
 Photon::Photon(Double_t new_photon_energy,string filename,Double_t density) {//constructor for a photon object
@@ -22,7 +21,6 @@ Photon::Photon(Double_t new_photon_energy,string filename,Double_t density) {//c
   anything.SetSeed(0);
   gRandom->SetSeed(0);
   FileReader(filename);
-  SetSplineMu(); //sets mu for volume number 0
 }
 
 Photon::Photon(Double_t new_photon_energy,Double_t new_mu,Double_t density) {//constructor for a photon object
@@ -42,11 +40,13 @@ Photon::~Photon() { //deconstructor
 }
 
 void Photon::SetMu(Double_t new_mu) { //sets mu
+  cout<<"doing setmu method!"<<endl;
   mu=new_mu;
 }
 
 void Photon::SetSplineMu() { //finds energy_dependent mu from spline, calls spline mu
-  mu=density*mu_spline->Eval(photon_energy);
+  cout<<"trying setsplinemu method!"<<endl;
+  mu=density*mu_spline->EvalSafe(photon_energy);
   SetMu(mu);
 }
 
@@ -125,11 +125,9 @@ void Photon::FileReader(string filename) {
   Double_t temp_cross;
   Double_t temp_cross_nocoh;  
 
+
   if (filename.find("txt")!=string::npos) {
-    //   Double_t staticmu=atof(filename.c_str);
-    SetMu(Double_t(atof(filename.c_str())));
-  }
-  else {
+    cout<<"filename is a file."<<endl;
     ifstream myfile(filename.c_str());
     while (myfile.good()) { //reading in the values from the file into the vectors
       myfile>>temp_energy>>temp_coherent>>temp_incoherent>>temp_photo>>temp_pairnucl>>temp_pairelec>>temp_cross>>temp_cross_nocoh;
@@ -141,7 +139,7 @@ void Photon::FileReader(string filename) {
       pairprodelec_vector.push_back(temp_pairelec);
       cross_vector.push_back(temp_cross);
       cross_nocoher_vector.push_back(temp_cross_nocoh);
-    }    
+    }
     myfile.close();
 
     //splines!!!
@@ -150,6 +148,12 @@ void Photon::FileReader(string filename) {
     incoherent_spline= new RLinearInterpolant(energy_vector,incoherent_scat_vector);
     photoelec_spline= new RLinearInterpolant(energy_vector,photoelectric_vector);
     //  pairprod_spline= new RLinearInterpolant(energy_vector,pairprodnucl_vector);
+
+    SetSplineMu();
+  }
+  else {
+    cout<<"filename is a double: "<<filename<<endl;
+    SetMu(Double_t(atof(filename.c_str())));
   }
 }
 

@@ -73,6 +73,7 @@ void SetupGeometry::SetOriginalPosition(Double_t sourceposition[]) {
   cartposition[0]=sourceposition[0];
   cartposition[1]=sourceposition[1];
   cartposition[2]=sourceposition[2];
+  SetCartPosition(newsphaddition);
 }
 
 void SetupGeometry::SetPhotonPosition(Double_t currentcartposition[]) {
